@@ -1,13 +1,14 @@
-# There are three modules in our framework. The simulation module and Bayesian module are in folder ./simulation_and_bayesian_modules. The deep learning module is in folder ./deep_learning_module. 
+# Sum up
+**There are three modules in our framework. The simulation module and Bayesian module are in folder ./simulation_and_bayesian_modules. The deep learning module is in folder ./deep_learning_module.**
 
 # Prerequisites:
-## For simulation and Bayesian modules
+### For simulation and Bayesian modules
 1. Cmake
 2. gcc
 3. g++
 4. OpenCV2.4 lib
 
-## For deep learning
+### For deep learning
 1. Anaconda 2 or Miniconda 2 (https://conda.io/miniconda.html)
 2. CUDA 8 and cudNN 5.1 (https://www.tensorflow.org/versions/r1.2/install/install_linux)
 
@@ -52,7 +53,7 @@ We totally generated about 4000 datasets from imagenet and 8000 datasets from sk
 
 # Get deep learning result:
 
-## Preprocessing
+### Preprocessing
 The current neural network is designed for 60x60 low-resolution fluorescent images with 200 frames (these can be changed by re-training). We need to perform the following process to get the input to deep learning module.
 
 There are several exes for the process of real data. The deep neural network need inputs of a set of image frames (not tif format). Here, use the cell6G_ori as an example.
@@ -72,12 +73,12 @@ clip.sh: change a series of large-field image frames to a set of series of image
 "clip" dir will contain 0-0-60-60 0-40-60-60... subdirs. Each of the subdirs will contains a 200 frames of images with 60x60 pixels. cellG_clip is the input of neural network for large-field datasets.
 
 
-## Build a virtual environment (Only need to be done once)
+### Build a virtual environment (Only need to be done once)
 ```
 conda env create -f environment.yml
 ```
 
-## Usage
+### Usage
 ```
 <!-- Activate the environment -->
 source activate tensorflow
@@ -87,10 +88,10 @@ python main.py --mode test --input path/to/lr/images
 source deactivate
 ```
 
-## Explanation of path
+### Explanation of path
 There are two modes: test and test_full. In the test mode, we only need to construct one image from 200 lr images. All the 200 images should be put into the same folder. In the test_full mode, we would perform a lot of such tasks. Each 200 images would have one separate folder, which is under the folder we give the program as the input argument.
 
-## Input images
+### Input images
 Each low resolution image should be one channel, 60 by 60 grayscale image.
 
 
