@@ -1,0 +1,16 @@
+
+set(MATRIX_INCLUDE_DIR .)
+set(MATRIX_SRC_DIR .)
+
+aux_source_directory(. MATRIX_SRCS)
+
+MESSAGE(STATUS "building matrix...")
+
+include_directories(${MATRIX_INCLUDE_DIR} ${MATRIX_SRC_DIR})
+
+add_library (matrix STATIC ${MATRIX_SRCS})
+
+target_link_libraries(matrix f2c cblas clapack m minpack)
+
+set_target_properties(matrix PROPERTIES OUTPUT_NAME "matrix")
+set_target_properties(matrix PROPERTIES CLEAN_DIRECT_OUTPUT 1)

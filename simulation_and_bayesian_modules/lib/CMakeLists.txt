@@ -1,0 +1,8 @@
+add_subdirectory(opencv_2.4.1)
+add_subdirectory(clapack_3.1)
+add_subdirectory(ann_1.2_char)
+add_subdirectory(matrix)
+add_subdirectory(sba_1.6)
+add_subdirectory(cblas)
+add_subdirectory(levmar_2.5)
+add_subdirectory(cminpack)

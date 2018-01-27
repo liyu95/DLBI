@@ -1,0 +1,6 @@
+
+MESSAGE(STATUS "building main")
+
+add_executable(atomalign main.cpp)
+
+target_link_libraries(atomalign sift dataf mrcimg keymatch bundle env ransac inerpret)

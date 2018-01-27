@@ -1,0 +1,12 @@
+
+
+aux_source_directory(. CMINPACK_SRCS)
+
+MESSAGE(STATUS "building cminpack...")
+
+add_library (minpack STATIC ${CMINPACK_SRCS})
+
+target_link_libraries(minpack f2c cblas clapack m)
+
+set_target_properties(minpack PROPERTIES OUTPUT_NAME "minpack")
+set_target_properties(minpack PROPERTIES CLEAN_DIRECT_OUTPUT 1)

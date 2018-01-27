@@ -1,0 +1,270 @@
+#include <iostream>
+#include <climits>
+#include <vector>
+#include <algorithm>
+#include <numeric>
+#include <time.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <iomanip>
+#include <sstream>
+#include "img_util.h"
+#include "cv.h"
+#include "highgui.h"
+#include "cxcore.h"
+#include "opts.h"
+
+
+// -i test.pgm -o test -n 300 -s 0.08333333333333333 -p 25
+
+using namespace std;
+
+#define SCALE0   10
+#define MD		16			//max density
+#define BOUNDARY 400
+
+int SCALE = SCALE0;
+
+class Sampling{
+private:
+	std::vector<int> sample_table;
+
+private:
+	float LogNormPSF(float x, float mu, float sigma){ //mu=0.242, sigma=0.1 or mu=-0.218, sigma=0.1
+		float k = (log(x)-mu);
+		return 1/(x*sigma*sqrt(2*M_PI))*exp(-k*k/(2*sigma*sigma));
+	}
+	
+public:
+	int InitializeRadiusSamplingTable(float mu, float sigma){
+		std::vector<int> x;
+		std::vector<int> y;
+		for(float i = 0.9; i < 1.9; i+= 0.1){
+			y.push_back(int(LogNormPSF(i, mu, sigma)*100+0.5));
+			x.push_back(int(i*SCALE+0.5));
+		}
+		
+		int acc = std::accumulate(y.begin(), y.end(), 0);
+		sample_table.resize(acc, 0);
+		
+		int idx = 0;
+		for(int i = 0; i < y.size(); i++){
+			for(int j = y[i]; j--;){
+				sample_table[idx++] = x[i];
+			}
+		}
+	}
+
+public:
+	Sampling(){
+		srand(time(NULL));
+	}
+
+	int GetRadius(){
+		int idx = rand()%sample_table.size();
+		return sample_table[idx];
+	}
+};
+
+class Fluophor{
+private:
+	int val;
+	bool state;		//true emitting; false not emitting
+	
+public:
+	Fluophor(){
+		val = 1;
+		state = false;
+	}
+	
+	void Set(int v, bool s = false){
+		val = v;
+		state = s;
+	}
+	
+	int Transition(){
+		int random;
+		
+		if(!val){
+			return 0;
+		}
+		if(state){//true emitting
+			random = rand()%1000;
+			if(random < 160){
+				return val*state;	//no change;
+			}
+			else{
+				return val*(state = false);	//stop emitting
+			}
+		}
+		if(!state){//false not emitting
+			random = rand()%1000;
+			if(random < 495){//490){//
+				return val*(state = true);	//emitting
+			}
+			else if(random < 990){//980){//
+				return val*state;	//no change;
+			}
+			else{
+				return val = 0;
+			}
+		}
+		return val*state;
+	}
+	
+	int Val(){
+		return val*state;
+	}
+};
+
+float gaussian2D(int x, int y, float sigma)
+{
+	double sig_2 = 1/(sigma*sigma);
+	
+	float val = std::exp(-(x*x+y*y)/(sigma*sigma)*.5);//0.5*sig_2/M_PI*exp(-(x*x+y*y)*sig_2*.5);
+	return val;
+}
+
+class GaussTable{
+private:
+	std::vector<IplImage*> pics;
+	int start_radius;
+	
+public:
+	GaussTable(){}
+	~GaussTable(){
+		if(pics.size()){
+			for(int i = 0; i < pics.size(); i++){
+				cvReleaseImage(&(pics[i]));
+			}
+		}
+	}
+	
+	void InitializeTable(int ra, int rb){
+		pics.resize(rb-ra+1);
+		int size = 2*rb+1;			//*1.7 for diffison
+		start_radius = ra;
+		for(int i = 0; i < pics.size(); i++){
+			int r = i+ra;
+			pics[i] = cvCreateImage(cvSize(size, size), IPL_DEPTH_32F, 1);
+			for(int y = -rb; y <= rb; y++){
+				for(int x = -rb; x <= rb; x++){
+					CV_IMAGE_ELEM(pics[i], float, y+rb, x+rb) = gaussian2D(x, y, r/2.3)*.22;//(x/r, y/r, 1);		*.5 is a pixel value scale
+					CV_IMAGE_ELEM(pics[i], float, y+rb, x+rb) += gaussian2D(x, y, r*3)*.02;
+				}
+			}
+		}
+	}
+	
+	IplImage* GetDistribution(int radius){
+		int idx = radius-start_radius;
+		if(idx >= pics.size() || idx < 0){
+			return NULL;
+		}
+		
+		return pics[idx];
+	}
+};
+
+int main(int argc, char **argv){
+    opts opt;
+	opt.output[0] = '\0';
+	opt.number = 1;
+	opt.psfwidth = SCALE0;
+	
+    if(GetOpts(argc, argv, &opt) != 1) {
+        return 0;
+    }
+    
+    SCALE = opt.psfwidth;
+
+	IplImage* ori = cvLoadImage(opt.input, CV_LOAD_IMAGE_GRAYSCALE);
+	
+	std::vector<Fluophor>** flv; //[ori->width][ori->height]
+	flv = new std::vector<Fluophor>*[ori->height];
+	for(int y = 0; y < ori->height; y++){
+		flv[y] = new std::vector<Fluophor>[ori->width];
+	}
+	
+	for(int y = 0; y < ori->height; y++){
+		uchar* ptr = (uchar*)(ori->imageData+y*ori->widthStep);
+		for(int x = 0; x < ori->width; x++){
+			int val = int(*(ptr+x));
+			if(val){
+				flv[y][x].resize(int(val/255.0*MD));
+			}
+		}
+	}
+	
+	IplImage* canvas = cvCreateImage(cvSize(ori->width+BOUNDARY*2,ori->height+BOUNDARY*2), IPL_DEPTH_32F, 1);
+	
+	GaussTable table; 	table.InitializeTable(int(0.9*SCALE+0.5), int(1.9*SCALE+0.5));//18, 38);
+	Sampling sampling; sampling.InitializeRadiusSamplingTable(0.242, 0.1);
+	
+	if(access(opt.output,0) == -1) {		//create file folder
+        mkdir(opt.output,0777);
+    }
+
+    EX_TRACE("Simulate %s:", opt.input);
+    
+	int itr = -2;
+	float scale = opt.sigma;
+	while(++itr < opt.number){
+		EX_TRACE("[%d]", itr);
+// 		std::cout<<"["<<itr<<"]"<<std::endl;
+		memset(canvas->imageData, 0, sizeof(char)*canvas->imageSize);
+		for(int y = 0; y < ori->height; y++){
+			for(int x = 0; x < ori->width; x++){
+				for(int i = 0; i < flv[y][x].size(); i++){
+					if(!flv[y][x][i].Transition()){
+						continue;
+					}
+					
+					int radius =sampling.GetRadius();
+					IplImage* psf = table.GetDistribution(radius);
+					CvRect roi; roi.width = psf->width; roi.height = psf->height;
+					roi.x = BOUNDARY+x-psf->width/2;
+					roi.y = BOUNDARY+y-psf->height/2;
+					
+					if(roi.x < 0 || roi.y < 0 || roi.x+roi.width >= canvas->width+BOUNDARY*2 || roi.y+roi.height >= canvas->height+BOUNDARY*2){
+						continue;
+					}
+					cvSetImageROI(canvas,roi);
+					cvAdd(canvas, psf, canvas);
+					cvResetImageROI(canvas);
+				}
+			}
+		}
+		
+		CvRect roi; roi.x = BOUNDARY; roi.y = BOUNDARY; roi.width = ori->width; roi.height = ori->height;
+		cvSetImageROI(canvas,roi);
+		
+		std::ostringstream oss;
+        oss <<opt.output<<"/"<<opt.output<<setfill('0') << setw(3)<<itr<<".tiff";
+		IplImage* cpy = cvCreateImage(cvSize(ori->width*scale, ori->height*scale), canvas->depth, canvas->nChannels);
+		cvResize(canvas, cpy, CV_INTER_CUBIC);
+		cvResetImageROI(canvas);
+		
+		cv::Mat noise = cv::Mat(cpy->width, cpy->height, CV_32F);
+		cv::randn(noise, 16*.35*.6, 16*0.7*.6);//MD*.35, MD*0.7);
+		IplImage ipltemp = noise;
+		cvAdd(&ipltemp, cpy, cpy);
+		if(itr >= 0 ){
+			cvSaveImage(oss.str().c_str(), cpy);
+		}
+		
+		cvReleaseImage(&cpy);
+	}
+	EX_TRACE("\n");
+// 	util::ConvertTo1(canvas, true);
+// 	util::SaveImage(canvas, "gaus.pgm");
+	
+	for(int y = 0; y < ori->height; y++){
+		delete [] flv[y];
+	}
+	delete [] flv;
+	
+	cvReleaseImage(&ori);
+	
+    return 0;
+}

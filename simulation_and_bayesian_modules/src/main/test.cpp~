@@ -1,0 +1,12 @@
+#include "mrc/mrcfile.h"
+#include <iostream>
+
+using namespace std;
+
+int main(int argc, char **argv){
+    
+    char * inoutf;///////////////////////////////////////
+    mrc_reverse(inoutf);/////////////////////////////////////////
+
+    return 0;
+}

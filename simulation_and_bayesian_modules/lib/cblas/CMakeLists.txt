@@ -1,0 +1,16 @@
+
+set(CBLAS_INCLUDE_DIR ./INCLUDE)
+set(CBLAS_SRC_DIR ./SRC)
+
+aux_source_directory(${CBLAS_SRC_DIR} CBLAS_SRCS)
+
+MESSAGE(STATUS "building cblas")
+
+include_directories(${CBLAS_SRC_DIR} ${CBLAS_INCLUDE_DIR})
+
+add_library(cblas STATIC ${CBLAS_INCLUDE_DIR}/fblaswr.h ${CBLAS_SRCS})
+
+target_link_libraries(cblas f2c m)
+
+set_target_properties(cblas PROPERTIES OUTPUT_NAME "cblas")
+set_target_properties(cblas PROPERTIES CLEAN_DIRECT_OUTPUT 1)

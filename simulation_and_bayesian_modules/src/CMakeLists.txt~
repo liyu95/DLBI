@@ -1,0 +1,12 @@
+
+add_subdirectory(main)
+add_subdirectory(mrcimg)
+add_subdirectory(sift)
+add_subdirectory(util)
+add_subdirectory(dataf)
+add_subdirectory(keymatch)
+add_subdirectory(bundle)
+add_subdirectory(env)
+add_subdirectory(test)
+add_subdirectory(ransac)
+add_subdirectory(interpret)
