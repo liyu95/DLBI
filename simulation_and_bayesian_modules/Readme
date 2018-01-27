@@ -6,7 +6,7 @@ After comply the super-resolution source, there will results in several exes (th
 
 To compile the code, one should:
 
-cd ./super_resolution
+cd ./simulation_and_bayesian_modules
 mkdir build
 cd ./build
 cmake ..
