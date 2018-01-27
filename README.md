@@ -1,5 +1,6 @@
 # Prerequisites:
 1. Anaconda 2 or Miniconda 2 (https://conda.io/miniconda.html)
+2. CUDA 8 and cudNN 5.1 (https://www.tensorflow.org/versions/r1.2/install/install_linux)
 
 # Build a virtual environment
 ```
