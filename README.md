@@ -99,7 +99,7 @@ There are two modes: test and test_full. In the test mode, we only need to const
 For example, if the "cellG_clip" dir is used as the input of the test_full mode, a folder like cell6_result will be outputted. Then, with the help of previous compiled exe "montage", a large-field super-resolution image will be outputted:
 ```
 ./montage -i cell6_result -o cell6-montage.pgm
-
+```
 ### Input images
 Each low resolution image should be one channel, 60 by 60 grayscale image. The output will be the images with 8x super-resolution.
 
