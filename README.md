@@ -111,11 +111,17 @@ The Bayesian module will takes the original images (for example, cell1G_ori) and
 
 For the demonstration of final results, people can access the https://drive.google.com/file/d/1DOMv2Fo9WbIyz7-biWEyVybqknJ65lid/view?usp=sharing to gain the full-resolution super-resolution images, videos and the used datasets. 
 • real1.avi: Movie of the first real-world dataset (Actin1).
+
 • real2.avi: Movie of the second real-world dataset (Actin2).
+
 • real3.avi: Movie of the third real-world dataset (ER).
+
 • real1.png: Large-field reconstruction of the yellow area from the first real-world dataset (Actin1).
+
 • real2.png: Large-field reconstruction of the yellow area from the second real-world dataset (Actin2).
+
 • real3.png: Large-field reconstruction of the yellow area from the third real-world dataset (ER).
+
 • CC.png: Overlap of the reconstruction images by DLBI (in red) and PALM (in green) (Actin1).
 
 And real1.tif, real2.tif and real3.tif are the corresponding original high-density fluorecent images.
