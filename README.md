@@ -105,7 +105,7 @@ Each low resolution image should be one channel, 60 by 60 grayscale image. The o
 
 
 # Bayesian module
-The Bayesian module will takes the original images (for example, cell1G_ori) and the deep learning super-resolution output (for example, cell6-montage.pgm) as input and ouput a further refined super-resolution image. Here, the core implementation of statistic inference is developed under the kind help of our collaborators. Users are encouraged to contact with the authors for further authorization.
+The Bayesian module will takes the original images (for example, cell1G_ori), the deep learning super-resolution output (for example, cell6-montage.pgm), the mask file (region of interest) and the configuration parameters as input and ouput a further refined super-resolution image. Here, the core implementation of statistic inference is developed under the kind help of our collaborators. Users are encouraged to contact with the authors for further authorization.
 
 # Final results
 
