@@ -109,7 +109,7 @@ The Bayesian module will takes the original images (for example, cell1G_ori), th
 
 # Final results
 
-For the demonstration of final results, people can access the https://drive.google.com/file/d/1DOMv2Fo9WbIyz7-biWEyVybqknJ65lid/view?usp=sharing to gain the full-resolution super-resolution images, videos and the used datasets. 
+For the demonstration of final results, people can access the https://drive.google.com/file/d/1DOMv2Fo9WbIyz7-biWEyVybqknJ65lid/view?usp=sharing (for people who google is blocked, please visit https://github.com/icthrm/DLBI_results) to gain the full-resolution super-resolution images, videos and the used datasets. 
 • real1.avi: Movie of the first real-world dataset (Actin1).
 
 • real2.avi: Movie of the second real-world dataset (Actin2).
