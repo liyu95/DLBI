@@ -109,7 +109,7 @@ The Bayesian module will takes the original images (for example, cell1G_ori), th
 
 # Final results
 
-For the demonstration of final results, people can access the https://drive.google.com/file/d/1DOMv2Fo9WbIyz7-biWEyVybqknJ65lid/view?usp=sharing (for people who google is blocked, please visit https://github.com/icthrm/DLBI_results) to gain the full-resolution super-resolution images, videos and the used datasets. 
+For the demonstration of final results, users can access the https://drive.google.com/file/d/1DOMv2Fo9WbIyz7-biWEyVybqknJ65lid/view?usp=sharing (for users whose google is blocked, please visit https://github.com/icthrm/DLBI_results) to gain the full-resolution super-resolution images, videos and the used datasets. 
 • real1.avi: Movie of the first real-world dataset (Actin1).
 
 • real2.avi: Movie of the second real-world dataset (Actin2).
@@ -126,5 +126,5 @@ For the demonstration of final results, people can access the https://drive.goog
 
 And real1.tif, real2.tif and real3.tif are the corresponding original high-density fluorecent images.
 
-Please note that the real datasets real1.tif, real2.tif and real3.tif are distributed under providing of Professor Xu and Professor Zhang (http://ear.ict.ac.cn/?page_id=207). People who what to use them alone should also cite the paper "Rational design of true monomeric and bright photoactivatable fluorescent proteins". 
+Please note that the real datasets real1.tif, real2.tif and real3.tif are distributed under providing of Professor Xu and Professor Zhang (http://ear.ict.ac.cn/?page_id=207). Readers who want to use them alone should also cite the paper "Rational design of true monomeric and bright photoactivatable fluorescent proteins". 
 
