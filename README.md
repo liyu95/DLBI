@@ -88,7 +88,7 @@ conda env create -f environment.yml
 <!-- Activate the environment -->
 source activate tensorflow
 <!-- Run the code -->
-python main.py --mode test --input path/to/lr/images
+python main.py --mode test --input path/to/lr/images --output output/folder
 <!-- Deactivate the environment -->
 source deactivate
 ```
