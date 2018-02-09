@@ -69,7 +69,6 @@ dependencies:
   - cycler==0.10.0
   - easydict==1.7
   - entrypoints==0.2.2
-  - f.lux-indicator-applet-1.1.10==pre
   - funcsigs==1.0.2
   - functools32==3.2.3.post2
   - h5py==2.7.1

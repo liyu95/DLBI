@@ -80,6 +80,7 @@ The input is the cell1G_ori directory (containing 200 image frames); The output 
 
 ### Build a virtual environment (Only need to be done once)
 ```
+cd deep_learning_module
 conda env create -f environment.yml
 ```
 
