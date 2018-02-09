@@ -12,6 +12,7 @@ import tensorflow as tf
 import tensorlayer as tl
 from model import *
 from utils import *
+from os.path import join
 
 ###====================== HYPER-PARAMETERS ===========================###
 
@@ -39,7 +40,8 @@ def read_all_imgs_lr(dir_list, path='', n_threads=32):
     return imgs
 
 
-def test(i_path):
+def test(i_path, out_path):
+    tl.files.exists_or_mkdir(out_path)
     checkpoint_dir = "./model"
 
     file_list = sorted(tl.files.load_file_list(path=i_path, regx='.*', printable=False))
@@ -63,7 +65,7 @@ def test(i_path):
         feed_dict = {t_image: [valid_lr_img]}
         feed_dict.update(net_g.all_drop)
         out, out_4, out_6 = sess.run([net_g.outputs, net_g_4.outputs, net_g_6.outputs], feed_dict=feed_dict)
-        tl.vis.save_image(out[0], './test/8Xtest_gen_{}.png'.format(i))
+        tl.vis.save_image(out[0], join(out_path,'8Xtest_gen_{}.png'.format(i)))
         # tl.vis.save_image(out_4[0], './test/4Xtest_gen_{}.png'.format(i))
         # tl.vis.save_image(out_6[0], './test/6Xtest_gen_{}.png'.format(i))
     valid_lr_img_rot = np.rot90(valid_lr_img, 1, (0,1))
@@ -74,7 +76,7 @@ def test(i_path):
         result = np.rot90(out[0], -1, (0,1))
         result_4 = np.rot90(out_4[0], -1, (0, 1))
         result_6 = np.rot90(out_6[0], -1, (0, 1))
-        tl.vis.save_image(result, './test/8Xtest_gen_{}_rot.png'.format(i))
+        tl.vis.save_image(result, join(out_path,'8Xtest_gen_{}_rot.png'.format(i)))
         # tl.vis.save_image(result_4, './test/4Xtest_gen_{}_rot.png'.format(i))
         # tl.vis.save_image(result_6, './test/6Xtest_gen_{}_rot.png'.format(i))
 
@@ -96,7 +98,8 @@ def read_all_imgs_test(dir_list, path='', n_threads=32):
         print('read %d from %s' % (len(imgs), path))
     return imgs
 
-def test_full(i_path):
+def test_full(i_path, out_path):
+    tl.files.exists_or_mkdir(out_path)
     checkpoint_dir = "./model"
 
     clip_list = sorted(os.listdir(i_path))
@@ -116,12 +119,12 @@ def test_full(i_path):
     for j in range(len(imgs)):
         img = imgs[j]
         valid_lr_img = norm_imgs(img)
-        tl.files.exists_or_mkdir('./test/{}'.format(clip_list[j]))
+        tl.files.exists_or_mkdir(join(out_path, '{}'.format(clip_list[j])))
         for i in range(10):
             feed_dict = {t_image: [valid_lr_img]}
             feed_dict.update(net_g.all_drop)
             out, out_4, out_6 = sess.run([net_g.outputs, net_g_4.outputs, net_g_6.outputs], feed_dict=feed_dict)
-            tl.vis.save_image(out[0], './test/{}/8Xtest_gen_{}.png'.format(clip_list[j], i))
+            tl.vis.save_image(out[0], join(out_path,'{}/8Xtest_gen_{}.png'.format(clip_list[j], i)))
         valid_lr_img_rot = np.rot90(valid_lr_img, 1, (0,1))
         for i in range(10):
             feed_dict = {t_image: [valid_lr_img_rot]}
@@ -130,7 +133,7 @@ def test_full(i_path):
             result = np.rot90(out[0], -1, (0,1))
             result_4 = np.rot90(out_4[0], -1, (0, 1))
             result_6 = np.rot90(out_6[0], -1, (0, 1))
-            tl.vis.save_image(result, './test/{}/8Xtest_gen_{}_rot.png'.format(clip_list[j], i))
+            tl.vis.save_image(result, join(out_path,'{}/8Xtest_gen_{}_rot.png'.format(clip_list[j], i)))
 
 if __name__ == '__main__':
     os.environ['CUDA_VISIBLE_DEVICES'] = '0'
@@ -139,15 +142,16 @@ if __name__ == '__main__':
 
     parser.add_argument('--mode', type=str, default='test', help='test, test_full')
     parser.add_argument('--input', type=str, required=True, help='The input path of the low resolution images.')
-
+    parser.add_argument('--output', type=str, required=True, help='The output path of the super resolution images.')
     args = parser.parse_args()
     # print(args.mode)
     # print(args.input)
+
     tl.global_flag['mode'] = args.mode
 
     if tl.global_flag['mode'] == 'test':
-        test(args.input)
+        test(args.input, args.output)
     elif tl.global_flag['mode'] == 'test_full':
-        test_full(args.input)
+        test_full(args.input, args.output)
     else:
         raise Exception("Unknow --mode")
