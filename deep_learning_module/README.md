@@ -10,7 +10,7 @@ conda env create -f environment.yml
 # Usage
 ```
 <!-- Activate the environment -->
-source activate tensorflow
+source activate dlbi
 <!-- Run the code -->
 python main.py --mode test --input path/to/lr/images --output output/folder
 <!-- Deactivate the environment -->
