@@ -1,5 +1,5 @@
 # Sum up
-** There are three modules in our framework. Our framework contains threes parts: data simulation, deep neural network and Bayesian inference. **
+**There are three modules in our framework. Our framework contains threes parts: data simulation, deep neural network and Bayesian inference.**
 
 Here, the simulation and deep neural network implementation is openly authorization, and the third part is partially authorization. The first part is data simulation module, whose source can be find in folder fluorescent_simulation_module. The second part is the deep learning module, who can be find in folder deep_learning_module. The third part is the Bayesian inference module, users are encouraged to contact with the authors for further authorization.
 
